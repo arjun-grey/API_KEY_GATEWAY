@@ -1,11 +1,14 @@
 import secrets
-from fastapi import APIRouter, status
+from typing import  Dict
+from fastapi import APIRouter, status  , HTTPException , Depends
 from database.keys import create_key
 from dependencies import auth
 
 router = APIRouter(prefix='/admin')
 
 API_DATABASE = {}
+
+
 
 @router.post("/keys", status_code=status.HTTP_201_CREATED)
 async def Create_API(client: create_key):
@@ -17,3 +20,22 @@ async def Create_API(client: create_key):
         "Rate_limit" : client.limit
     }
     return {"api_key":api_key , "data" : API_DATABASE[api_key]}
+
+@router.get("/keys" , status_code=status.HTTP_200_OK , response_model=Dict)
+def keys_list():
+    if not API_DATABASE:
+        raise HTTPException(
+            status_code = 404,
+            detail="Dictionary is empty"
+        )
+    return API_DATABASE
+
+@router.delete('/keys{key}', status_code=status.HTTP_200_OK)
+def key_revoke(key):
+    if key not in API_DATABASE:
+        raise HTTPException(
+           status_code=404 ,
+           detail="Dictionary is empty"
+       )
+    del API_DATABASE[key]
+    return {"message " : "key deleted"}
