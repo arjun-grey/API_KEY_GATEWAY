@@ -10,12 +10,12 @@ router = APIRouter(prefix='/admin')
 
 @router.post("/keys", status_code=status.HTTP_201_CREATED)
 async def Create_API(client: create_key):
+    global API_DATABASE
     api_key = secrets.token_hex(32)
     
     API_DATABASE[api_key] = {
-        "Client_name" : client.name,
+        "name": client.name,
         "Scope" : client.scope,
-        "Rate_limit" : client.limit
     }
     return {"api_key":api_key , "data" : API_DATABASE[api_key]}
 
@@ -30,6 +30,7 @@ def keys_list():
 
 @router.delete('/keys{key}', status_code=status.HTTP_200_OK)
 def key_revoke(key):
+    global API_DATABASE
     if key not in API_DATABASE:
         raise HTTPException(
            status_code=404 ,
