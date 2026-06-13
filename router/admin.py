@@ -3,10 +3,8 @@ from typing import  Dict
 from fastapi import APIRouter, status  , HTTPException , Depends
 from database.keys import create_key
 from dependencies import auth
-
+from database.api import API_DATABASE
 router = APIRouter(prefix='/admin')
-
-API_DATABASE = {}
 
 
 
