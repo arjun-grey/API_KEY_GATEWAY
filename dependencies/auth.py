@@ -18,12 +18,12 @@ async def authentication(api :str = Header(None)):
     
     return API_DATABASE[api]
 
-async def AdminAuth(key_detail :dict = [Depends(authentication)]):
+async def AdminAuth(key_detail :dict = Depends(authentication)):
     
     if "admin" not in key_detail['scope']:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detial = "Not have admin access"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail = "Not have admin access"
         )
 
     return key_detail
